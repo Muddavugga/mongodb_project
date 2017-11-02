@@ -11,32 +11,32 @@ var app = express();
 
 // Set mongoose to leverage built in JavaScript ES6 Promises
 mongoose.Promise = Promise;
-
+app.use(express.static("public"));
 var port = process.env.PORT || 3000;
 
 
 
 
 
-
-
-
-
-
-
-
 app.get("/scrape", function(req, res) {
+  let result  = [];
     // First, we grab the body of the html with request
     request('https://www.theonion.com/', function (error, response, body) {
       //console logs the headlines with Cheerio
         var $ = cheerio.load(body);
         $('.entry-title').each(function(){
-            console.log('NEWS: ',$(this).text())
+         
+          result.push({
+            title:$(this).text()
+          })
+            console.log('NEWS: ', $(this).text())
         })
+        res.json(result);
       });
    
     // Tell the browser that we finished scraping the text
-    res.send("Scrape Complete");
+    // res.send("Scrape Complete");
+    
   });
   
   // This will get the articles we scraped from the mongoDB
